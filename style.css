@@ -14,6 +14,21 @@ body{
   overflow:hidden;
 }
 
+.debug{
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.35);
+  color: rgba(255,255,255,.9);
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  white-space: pre-wrap;
+}
+
 .banner{
   position: fixed;
   left: 48px;
@@ -27,8 +42,11 @@ body{
   background: linear-gradient(180deg, var(--glass), rgba(0,0,0,.18));
   backdrop-filter: blur(12px);
   box-shadow: 0 20px 70px var(--shadow);
+
+  /* estado base = escondido fora do ecrã */
   transform: translateX(-120%);
   opacity: 0;
+  will-change: transform, opacity;
 }
 
 .chip{
@@ -44,9 +62,7 @@ body{
   font-size: 22px;
 }
 
-.content{
-  min-width: 420px;
-}
+.content{ min-width: 420px; }
 
 .headline{
   color: var(--muted);
@@ -80,10 +96,10 @@ body{
   background: rgba(255,255,255,.85);
 }
 
+/* animações */
 .show{
   animation: slideIn .6s cubic-bezier(.2,.9,.2,1) forwards;
 }
-
 .hide{
   animation: slideOut .5s cubic-bezier(.2,.9,.2,1) forwards;
 }
@@ -91,7 +107,6 @@ body{
 @keyframes slideIn{
   to { transform: translateX(0); opacity: 1; }
 }
-
 @keyframes slideOut{
   to { transform: translateX(-120%); opacity: 0; }
 }
