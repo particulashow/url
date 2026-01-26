@@ -1,71 +1,35 @@
 const params = new URLSearchParams(window.location.search);
 
-const urlText = params.get("url") || "particulainfluente.pt";
-const headlineText = params.get("headline") || "Visita o website";
-const intervalSec = Number(params.get("interval") || 45); // reaparece
-const showSec = Number(params.get("show") || 8);          // fica visível
-const align = params.get("align") || "left";              // left | right
-const debugOn = params.get("debug") === "1";              // debug=1
+/* ===============================
+   helpers
+================================ */
+const pick = (...keys) => {
+  for (const k of keys){
+    const v = params.get(k);
+    if (v && v.trim() !== "") return v.trim();
+  }
+  return "";
+};
 
-const banner = document.getElementById("banner");
-const urlEl = document.getElementById("url");
-const headlineEl = document.getElementById("headline");
-const fill = document.getElementById("barFill");
-const debugEl = document.getElementById("debug");
+const safeHex = (v) =>
+  /^#[0-9a-fA-F]{6}$/.test(v || "") ? v : "";
 
-urlEl.textContent = urlText;
-headlineEl.textContent = headlineText;
+/* ===============================
+   TEXT (aliases)
+================================ */
+const title = pick("title","t","headline","label","text") || "Vai ao site";
+const url   = pick("url","link","href") || "https://teusite.com";
 
-if (align === "right") {
-  banner.style.left = "auto";
-  banner.style.right = "48px";
-  // entra pela direita
-  banner.style.transform = "translateX(120%)";
-}
+document.getElementById("title").textContent = title;
+document.getElementById("url").textContent = url;
 
-function logDebug(msg){
-  if (!debugOn) return;
-  debugEl.style.display = "block";
-  debugEl.textContent = msg;
-}
+/* ===============================
+   CORES (aliases)
+================================ */
+const accent = safeHex(pick("accent","primary","color","main"));
+const bg     = safeHex(pick("bg","background","backgroundColor"));
+const text   = safeHex(pick("textColor","text","fg","font"));
 
-function animateBar(durationMs){
-  fill.style.transition = "none";
-  fill.style.width = "0%";
-  requestAnimationFrame(() => {
-    fill.style.transition = `width ${durationMs}ms linear`;
-    fill.style.width = "100%";
-  });
-}
-
-let hideTimer = null;
-
-function showBanner(){
-  const durationMs = Math.max(1500, showSec * 1000);
-
-  banner.classList.remove("hide");
-  banner.classList.add("show");
-
-  animateBar(durationMs);
-
-  if (hideTimer) clearTimeout(hideTimer);
-  hideTimer = setTimeout(() => {
-    banner.classList.remove("show");
-    banner.classList.add("hide");
-    logDebug(
-      `OK: mostrou e escondeu\n` +
-      `url=${urlText}\nheadline=${headlineText}\nshow=${showSec}s interval=${intervalSec}s align=${align}`
-    );
-  }, durationMs);
-}
-
-function start(){
-  // 1) mostra logo ao iniciar (para veres no OBS)
-  showBanner();
-
-  // 2) repete de X em X segundos
-  setInterval(showBanner, Math.max(5, intervalSec) * 1000);
-}
-
-logDebug("A iniciar... se não vires o banner, o OBS pode estar a bloquear ou o URL está errado.");
-start();
+if (accent) document.documentElement.style.setProperty("--accent", accent);
+if (bg)     document.documentElement.style.setProperty("--bg", bg);
+if (text)   document.documentElement.style.setProperty("--text", text);
